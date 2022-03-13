@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zs.Common", "src\Zs.Common.csproj", "{C619D939-956F-4658-B070-167FA3F2021D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zs.Common.UnitTests", "tests\UnitTests\UnitTests.csproj", "{58229B42-89B2-4FF8-A851-5FA421CEEAD4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zs.Common.UnitTests", "tests\Zs.Common.UnitTests\Zs.Common.UnitTests.csproj", "{58229B42-89B2-4FF8-A851-5FA421CEEAD4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
