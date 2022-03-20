@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Zs.Common.Enums;
 
-namespace Zs.Common.Abstractions.Data;
+namespace Zs.Common.Abstractions;
 
 public interface IDbClient
 {
