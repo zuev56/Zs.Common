@@ -1,9 +1,8 @@
-﻿namespace Zs.Common.Enums
+﻿namespace Zs.Common.Enums;
+
+public enum InfoMessageType : short
 {
-    public enum InfoMessageType : short
-    {
-        Info = 0,
-        Warning,
-        Error
-    }
+    Info = 0,
+    Warning,
+    Error
 }

@@ -1,10 +1,9 @@
 ﻿using Zs.Common.Enums;
 
-namespace Zs.Common.Abstractions
+namespace Zs.Common.Abstractions;
+
+public interface IInfoMessage
 {
-    public interface IInfoMessage
-    {
-        InfoMessageType Type { get; }
-        string Text { get; }
-    }
+    InfoMessageType Type { get; }
+    string Text { get; }
 }

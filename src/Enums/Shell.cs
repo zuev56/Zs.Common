@@ -1,8 +1,7 @@
-﻿namespace Zs.Common.Enums
+﻿namespace Zs.Common.Enums;
+
+public enum Shell 
 {
-    public enum Shell 
-    {
-        Bash,
-        Pwsh
-    }
+    Bash,
+    Pwsh
 }

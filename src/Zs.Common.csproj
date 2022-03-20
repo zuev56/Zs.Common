@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+	<Nullable>enable</Nullable>
     <PackageId>Zs.Common</PackageId>
     <Version>6.0.2</Version>
     <Authors>zuev56 (Sergei Zuev)</Authors>
