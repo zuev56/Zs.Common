@@ -135,7 +135,19 @@ public class ServiceResult<TResult> : ServiceResult, IOperationResult<TResult>
         return serviceResult;
     }
 
+    [Obsolete]
     public static ServiceResult<TResult> Warning(TResult result, string message)
+    {
+        if (string.IsNullOrWhiteSpace(message))
+            throw new ArgumentException("Message can not be empty", nameof(message));
+
+        var serviceResult = new ServiceResult<TResult> { Value = result };
+        serviceResult.Messages.Add(InfoMessage.Warning(message));
+
+        return serviceResult;
+    }
+
+    public static ServiceResult<TResult> Warning(string message, TResult result = default)
     {
         if (string.IsNullOrWhiteSpace(message))
             throw new ArgumentException("Message can not be empty", nameof(message));

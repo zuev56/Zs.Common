@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
 	<Nullable>enable</Nullable>
     <PackageId>Zs.Common</PackageId>
-    <Version>6.0.7</Version>
+    <Version>6.0.8</Version>
     <Authors>zuev56 (Sergei Zuev)</Authors>
     <Company>zuev56 (Sergei Zuev)</Company>
     <RepositoryUrl>https://github.com/zuev56/Zs.Common</RepositoryUrl>
