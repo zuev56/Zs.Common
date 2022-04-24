@@ -20,4 +20,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Zs.Common.csproj" />
+  </ItemGroup>
+
 </Project>

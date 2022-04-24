@@ -28,18 +28,9 @@ public static class LoggerExtension
 
         logger.LogInformation(logStr, (DateTime.Now - process.StartTime),
             process.TotalProcessorTime, process.UserProcessorTime, process.PrivilegedProcessorTime,
-            BytesToSize(process.WorkingSet64), BytesToSize(process.PeakWorkingSet64),
+            process.WorkingSet64.BytesAmountToSizeString(), process.PeakWorkingSet64.BytesAmountToSizeString(),
             process.Threads.Count);
     }
-
-    private static string BytesToSize(long bytes)
-    {
-        string[] sizes = new[] { "Bytes", "KB", "MB", "GB", "TB" };
-        if (bytes == 0) return "0 Byte";
-        var i = (int)Math.Floor(Math.Log(bytes) / Math.Log(1024));
-        return Math.Round(bytes / Math.Pow(1024, i), 2) + " " + sizes[i];
-    }
-
 
     #region Perfomance improvements (https://andrewlock.net/exploring-dotnet-6-part-8-improving-logging-performance-with-source-generators/)
 
