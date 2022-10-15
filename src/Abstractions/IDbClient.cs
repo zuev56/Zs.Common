@@ -5,6 +5,6 @@ namespace Zs.Common.Abstractions;
 
 public interface IDbClient
 {
-    Task<string> GetQueryResultAsync(string sqlQuery);
-    Task<string> GetQueryResultAsync(string sqlQuery, QueryResultType resultType);
+    Task<string?> GetQueryResultAsync(string sqlQuery);
+    Task<string?> GetQueryResultAsync(string sqlQuery, QueryResultType resultType);
 }

@@ -25,9 +25,9 @@ public abstract class DbClientBase<TConnection, TCommand> : IDbClient
     }
 
 
-    public async Task<string> GetQueryResultAsync(string sqlQuery)
+    public async Task<string?> GetQueryResultAsync(string sqlQuery)
     {
-        return await MakeQueryAndHandleResult(sqlQuery,
+        var result = await MakeQueryAndHandleResult(sqlQuery,
             handleResult: async (reader) =>
             {
                 await reader.ReadAsync();
@@ -37,14 +37,14 @@ public abstract class DbClientBase<TConnection, TCommand> : IDbClient
 
                 return result;
             });
+
+        return result;
     }
 
-    public async Task<string> GetQueryResultAsync(
-        string sqlQuery,
-        QueryResultType resultType)
+    public async Task<string?> GetQueryResultAsync(string sqlQuery, QueryResultType resultType)
     {
         return await MakeQueryAndHandleResult(sqlQuery,
-            handleResult: async (reader) =>
+            handleResult: async reader =>
             {
                 bool isDbNull;
                 switch (resultType)
@@ -66,7 +66,6 @@ public abstract class DbClientBase<TConnection, TCommand> : IDbClient
     }
 
     private async Task<TResult> MakeQueryAndHandleResult<TResult>(string sqlQuery, Func<DbDataReader, Task<TResult>> handleResult)
-
     {
         try
         {
@@ -80,33 +79,30 @@ public abstract class DbClientBase<TConnection, TCommand> : IDbClient
             {
                 connection.ConnectionString = _connectionString;
                 await connection.OpenAsync();
+                TResult result;
 
-                if (!string.IsNullOrWhiteSpace(sqlQuery))
+                using var command = new TCommand();
                 {
-                    using var command = new TCommand();
-                    {
-                        command.CommandText = sqlQuery;
-                        command.Connection = connection;
+                    command.CommandText = sqlQuery;
+                    command.Connection = connection;
 
-                        using var reader = await command.ExecuteReaderAsync();
-                        {
-                            return await handleResult(reader);
-                        }
+                    using var reader = await command.ExecuteReaderAsync();
+                    {
+                        result = await handleResult(reader);
                     }
                 }
 
                 sw.Stop();
-                _logger?.LogDebug("{MethodName} [Elapsed: {Elapsed}].\n\tSQL: {SQL}", nameof(DbClientBase<TConnection, TCommand>.GetQueryResultAsync), sw.Elapsed, sqlQuery);
+                _logger.LogDebug("{MethodName} [Elapsed: {Elapsed}].\n\tSQL: {SQL}", nameof(GetQueryResultAsync), sw.Elapsed, sqlQuery);
 
                 await connection.CloseAsync();
-                return default;
+                return result;
             }
-
         }
         catch (InvalidCastException icex)
         {
-            _logger?.LogError(icex, "Error getting query result");
-            return default;
+            _logger.LogError(icex, "Error getting query result");
+            throw;
         }
     }
 }
