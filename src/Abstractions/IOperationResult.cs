@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.Json.Nodes;
 using Zs.Common.Enums;
 
 namespace Zs.Common.Abstractions;
 
 /// <summary> Any operation result </summary>
+[Obsolete("Use Result instead. This will be removed in version 7.x.x")]
 public interface IOperationResult
 {
     bool IsSuccess { get; }

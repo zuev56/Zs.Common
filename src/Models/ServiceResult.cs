@@ -8,6 +8,7 @@ using Zs.Common.Enums;
 
 namespace Zs.Common.Models;
 
+[Obsolete("Use Result instead. This will be removed in version 7.x.x")]
 public class ServiceResult : IOperationResult
 {
     // TODO: remove  m != null and fix

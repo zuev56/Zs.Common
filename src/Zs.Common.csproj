@@ -2,9 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-	<Nullable>enable</Nullable>
+    <Nullable>enable</Nullable>
     <PackageId>Zs.Common</PackageId>
-    <Version>6.0.9</Version>
+    <Version>6.0.10</Version>
+    <PublishTrimmed>true</PublishTrimmed>
     <Authors>zuev56 (Sergei Zuev)</Authors>
     <Company>zuev56 (Sergei Zuev)</Company>
     <RepositoryUrl>https://github.com/zuev56/Zs.Common</RepositoryUrl>
@@ -13,8 +14,9 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.3" />
+<!--    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.3" />-->
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.2" />
   </ItemGroup>
 
 </Project>

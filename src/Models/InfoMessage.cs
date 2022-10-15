@@ -1,8 +1,10 @@
-﻿using Zs.Common.Abstractions;
+﻿using System;
+using Zs.Common.Abstractions;
 using Zs.Common.Enums;
 
 namespace Zs.Common.Models;
 
+[Obsolete("Will be removed in version 7.x.x")]
 public sealed class InfoMessage : IInfoMessage
 {
     public InfoMessageType Type { get; init; }

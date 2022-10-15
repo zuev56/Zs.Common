@@ -2,6 +2,7 @@
 
 namespace Zs.Common.Models;
 
+[Obsolete("Will be removed in version 7.x.x")]
 public sealed class ErrorInfo
 {
     public string Text { get; }
