@@ -1,8 +1,8 @@
 ﻿namespace Zs.Common.Enums;
 
-public enum ConnectionStatus : short
+public enum ConnectionStatus
 {
-    Undefined = -1,
+    Undefined = 0,
     Ok,
     NoProxyConnection,
     NoInternetConnection

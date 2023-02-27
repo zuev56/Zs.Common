@@ -11,8 +11,8 @@ public sealed class Buffer<T>
 
     public delegate void BufferChangedDelegate(object sender, T item);
 
-    public event BufferChangedDelegate OnEnqueue;
-    public event BufferChangedDelegate OnDequeue;
+    public event BufferChangedDelegate? OnEnqueue;
+    public event BufferChangedDelegate? OnDequeue;
 
 
     public Buffer()
@@ -34,12 +34,11 @@ public sealed class Buffer<T>
 
     public bool TryDequeue(out T item)
     {
-        bool result = _buffer.TryDequeue(out item);
+        var result = _buffer.TryDequeue(out item);
 
         if (result)
             OnDequeue?.Invoke(this, item);
 
         return result;
     }
-
 }

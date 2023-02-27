@@ -4,12 +4,8 @@ namespace Zs.Common.Models;
 
 public sealed class DateTimeRange
 {
-    public DateTime Start { get; init; }
-    public DateTime End { get; init; }
-
-    private DateTimeRange()
-    {
-    }
+    public DateTime Start { get; }
+    public DateTime End { get; }
 
     public DateTimeRange(DateTime start)
     {
@@ -17,8 +13,8 @@ public sealed class DateTimeRange
     }
 
     public DateTimeRange(DateTime start, DateTime end)
+        : this(start)
     {
-        Start = start;
         End = end;
     }
 }

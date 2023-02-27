@@ -8,7 +8,7 @@ public sealed class ItemNotFoundException : Exception
     {
     }
 
-    public ItemNotFoundException(object item, string message = null)
+    public ItemNotFoundException(object item, string? message = null)
         : base(message)
     {
         Data.Add("Item", item);

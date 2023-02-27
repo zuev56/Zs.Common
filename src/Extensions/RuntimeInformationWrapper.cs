@@ -11,7 +11,7 @@ public static class RuntimeInformationWrapper
           .Append("OS: ").Append(RuntimeInformation.OSDescription).Append(' ').Append(RuntimeInformation.OSArchitecture).AppendLine()
           .Append("Framework: ").Append(RuntimeInformation.FrameworkDescription).AppendLine()
           .Append("Process: ").Append(RuntimeInformation.ProcessArchitecture).AppendLine()
-          .Append("RintimeID: ").Append(RuntimeInformation.RuntimeIdentifier);
+          .Append("RuntimeID: ").Append(RuntimeInformation.RuntimeIdentifier);
 
         return sb.ToString();
     }

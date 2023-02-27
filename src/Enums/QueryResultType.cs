@@ -1,9 +1,9 @@
 ﻿namespace Zs.Common.Enums;
 
-public enum QueryResultType : short
+public enum QueryResultType
 {
-    Undefined = -1,
-    NoResult = 0,
+    Undefined = 0,
+    NoResult,
     Json,
     String,
     Double

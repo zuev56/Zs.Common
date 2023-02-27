@@ -8,15 +8,10 @@ public class FaultException : Exception
 {
     public Fault Fault { get; }
 
-    public FaultException(Fault fault, Exception? innerException)
+    public FaultException(Fault fault, Exception? innerException = null)
         : base(fault.Message, innerException)
     {
         Fault = fault;
-    }
-
-    public FaultException(Fault fault)
-        : this(fault, null)
-    {
     }
 
     public FaultException()
@@ -24,13 +19,8 @@ public class FaultException : Exception
     {
     }
 
-    public FaultException(string message, Exception innerException)
+    public FaultException(string message, Exception? innerException = null)
         : this(Fault.Unknown.SetMessage(message), innerException)
-    {
-    }
-
-    public FaultException(string message)
-        : this(message, null)
     {
     }
 }

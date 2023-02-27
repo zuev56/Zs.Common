@@ -4,7 +4,7 @@ public enum AppEnvironment
 {
     Default = 0,
     Development,
-    QA,
+    Test,
     Staging,
     Production
 }

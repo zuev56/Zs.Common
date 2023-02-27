@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Common;
 using System.Diagnostics;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Zs.Common.Enums;
@@ -13,30 +14,31 @@ public abstract class DbClientBase<TConnection, TCommand> : IDbClient
     where TCommand : DbCommand, new()
 {
     private readonly string _connectionString;
-    private readonly ILogger<DbClientBase<TConnection, TCommand>> _logger;
+    private readonly ILogger<DbClientBase<TConnection, TCommand>>? _logger;
 
-    protected DbClientBase(string connectionString, ILogger<DbClientBase<TConnection, TCommand>> logger = null)
+    protected DbClientBase(string connectionString, ILogger<DbClientBase<TConnection, TCommand>>? logger = null)
     {
         if (string.IsNullOrWhiteSpace(connectionString))
+        {
             throw new ArgumentException($"'{nameof(_connectionString)}' cannot be null or empty", nameof(_connectionString));
+        }
 
         _connectionString = connectionString;
         _logger = logger;
     }
 
-
     public async Task<string?> GetQueryResultAsync(string sqlQuery)
     {
         var result = await MakeQueryAndHandleResult(sqlQuery,
-            handleResult: async (reader) =>
+            handleResult: static async (reader) =>
             {
-                await reader.ReadAsync();
+                await reader.ReadAsync().ConfigureAwait(false);;
 
-                bool isDbNull = await reader.IsDBNullAsync(0);
+                var isDbNull = await reader.IsDBNullAsync(0).ConfigureAwait(false);;
                 var result = !isDbNull ? reader.GetString(0) : null;
 
                 return result;
-            });
+            }).ConfigureAwait(false);;
 
         return result;
     }
@@ -50,19 +52,19 @@ public abstract class DbClientBase<TConnection, TCommand> : IDbClient
                 switch (resultType)
                 {
                     case QueryResultType.Double:
-                        await reader.ReadAsync();
-                        isDbNull = await reader.IsDBNullAsync(0);
-                        return isDbNull ? null : reader.GetDouble(0).ToString();
+                        await reader.ReadAsync().ConfigureAwait(false);;
+                        isDbNull = await reader.IsDBNullAsync(0).ConfigureAwait(false);;
+                        return isDbNull ? null : reader.GetDouble(0).ToString(CultureInfo.InvariantCulture);
                     case QueryResultType.Json:
-                        return await reader.ReadToJsonAsync();
+                        return await reader.ReadToJsonAsync().ConfigureAwait(false);;
                     case QueryResultType.String:
-                        await reader.ReadAsync();
-                        isDbNull = await reader.IsDBNullAsync(0);
+                        await reader.ReadAsync().ConfigureAwait(false);;
+                        isDbNull = await reader.IsDBNullAsync(0).ConfigureAwait(false);;
                         return isDbNull ? null : reader.GetString(0);
                     default:
                         return null;
                 }
-            });
+            }).ConfigureAwait(false);;
     }
 
     private async Task<TResult> MakeQueryAndHandleResult<TResult>(string sqlQuery, Func<DbDataReader, Task<TResult>> handleResult)
@@ -75,33 +77,33 @@ public abstract class DbClientBase<TConnection, TCommand> : IDbClient
             var sw = new Stopwatch();
             sw.Start();
 
-            using var connection = new TConnection();
+            await using var connection = new TConnection();
             {
                 connection.ConnectionString = _connectionString;
-                await connection.OpenAsync();
+                await connection.OpenAsync().ConfigureAwait(false);;
                 TResult result;
 
-                using var command = new TCommand();
+                await using var command = new TCommand();
                 {
                     command.CommandText = sqlQuery;
                     command.Connection = connection;
 
-                    using var reader = await command.ExecuteReaderAsync();
+                    await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);;
                     {
                         result = await handleResult(reader);
                     }
                 }
 
                 sw.Stop();
-                _logger.LogDebug("{MethodName} [Elapsed: {Elapsed}].\n\tSQL: {SQL}", nameof(GetQueryResultAsync), sw.Elapsed, sqlQuery);
+                _logger?.LogDebug("{MethodName} [Elapsed: {Elapsed}].\n\tSQL: {SQL}", nameof(GetQueryResultAsync), sw.Elapsed, sqlQuery);
 
-                await connection.CloseAsync();
+                await connection.CloseAsync().ConfigureAwait(false);;
                 return result;
             }
         }
         catch (InvalidCastException icex)
         {
-            _logger.LogError(icex, "Error getting query result");
+            _logger?.LogError(icex, "Error getting query result");
             throw;
         }
     }

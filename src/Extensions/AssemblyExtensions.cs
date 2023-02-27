@@ -5,20 +5,27 @@ using System.Reflection;
 
 namespace Zs.Common.Extensions;
 
-public static class AssemblyExtension
+public static class AssemblyExtensions
 {
-    public static string ReadResource(this Assembly assembly, string resourceName)
+    public static string? ReadResource(this Assembly assembly, string resourceName)
     {
-        if (assembly is null)
-            throw new ArgumentNullException(nameof(assembly));
+        ArgumentNullException.ThrowIfNull(assembly);
 
         if (string.IsNullOrWhiteSpace(resourceName))
+        {
             throw new ArgumentException($"'{nameof(resourceName)}' cannot be null or whitespace", nameof(resourceName));
+        }
 
-        var resourcePath = assembly.GetManifestResourceNames()
+        var resourcePath = assembly
+            .GetManifestResourceNames()
             .Single(str => str.EndsWith(resourceName));
 
         using var stream = assembly.GetManifestResourceStream(resourcePath);
+        if (stream is null)
+        {
+            return null;
+        }
+
         using var reader = new StreamReader(stream);
         return reader.ReadToEnd();
     }
