@@ -15,10 +15,18 @@ public class Result
 
     public static Result Success() => new(null);
 
+    public static Result<TValue> Success<TValue>(TValue value) => new(value);
+
     public static Result Fail(Fault fault)
     {
         ArgumentNullException.ThrowIfNull(fault);
         return new Result(fault);
+    }
+
+    public static Result<TValue> Fail<TValue>(Fault fault)
+    {
+        ArgumentNullException.ThrowIfNull(fault);
+        return new Result<TValue>(default, fault);
     }
 
     public virtual void EnsureSuccess()
@@ -47,12 +55,5 @@ public class Result<TValue> : Result
         : base(fault)
     {
         _value = value;
-    }
-
-    public static Result<TValue> Success(TValue value) => new(value);
-    public static Result<TValue> Fail(Fault fault)
-    {
-        ArgumentNullException.ThrowIfNull(fault);
-        return new Result<TValue>(default!, fault);
     }
 }
