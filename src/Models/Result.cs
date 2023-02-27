@@ -50,7 +50,7 @@ public class Result<TValue> : Result
     }
 
     public static Result<TValue> Success(TValue value) => new(value);
-    public static Result<TValue> Fail<TValue>(Fault fault)
+    public static Result<TValue> Fail(Fault fault)
     {
         ArgumentNullException.ThrowIfNull(fault);
         return new Result<TValue>(default!, fault);
