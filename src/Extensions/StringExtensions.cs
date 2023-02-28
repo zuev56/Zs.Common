@@ -11,7 +11,7 @@ namespace Zs.Common.Extensions;
 
 public static class StringExtensions
 {
-    private static readonly JsonSerializerOptions prettyJsonSerializerOptions = new JsonSerializerOptions()
+    private static readonly JsonSerializerOptions prettyJsonSerializerOptions = new ()
     {
         WriteIndented = true,
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
@@ -48,14 +48,14 @@ public static class StringExtensions
 
         using var md5Hash = MD5.Create();
         var bytes = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(value));
-        var sBuilder = new StringBuilder();
+        var sb = new StringBuilder();
 
         foreach (var @byte in bytes)
         {
-            sBuilder.Append(@byte.ToString("x2"));
+            sb.Append(@byte.ToString("x2"));
         }
 
-        return sBuilder.ToString();
+        return sb.ToString();
     }
 
     /// <summary>Split a string into parts of specific length</summary>
@@ -66,6 +66,11 @@ public static class StringExtensions
         if (partLength <= 0)
         {
             throw new ArgumentException($"{nameof(partLength)} has to be positive.", nameof(partLength));
+        }
+
+        if (value == string.Empty)
+        {
+            yield return string.Empty;
         }
 
         for (var i = 0; i < value.Length; i += partLength)
