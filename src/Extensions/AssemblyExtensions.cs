@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
+#nullable enable
 namespace Zs.Common.Extensions;
 
 public static class AssemblyExtensions

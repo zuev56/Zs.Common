@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Zs.Common.Extensions;
+namespace Zs.Common.Utilities;
 
 public static class RuntimeInformationWrapper
 {
