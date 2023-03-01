@@ -157,4 +157,20 @@ public static class StringExtensions
                 return original;
         }
     }
+
+    public static bool IsValidIp(this string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return false;
+        }
+
+        if (value.StartsWith(' ') || value.EndsWith(' '))
+        {
+            return false;
+        }
+
+        var splitValues = value.Split('.');
+        return splitValues.Length == 4 && splitValues.All(r => byte.TryParse(r, out _));
+    }
 }

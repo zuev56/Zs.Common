@@ -47,4 +47,37 @@ public sealed class StringExtensionsTests
         stringWithoutDigits.Should().Be(expectedString);
     }
 
+    [Theory]
+    [InlineData("0.0.0.0")]
+    [InlineData("255.255.255.255")]
+    [InlineData("1.2.3.4")]
+    [InlineData("127.0.0.1")]
+    [InlineData("192.168.1.1")]
+    public void IsValidIp_ShouldReturn_True(string sourceString)
+    {
+        var isValidIp = sourceString.IsValidIp();
+
+        isValidIp.Should().BeTrue();
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("1.2.3.4 ")]
+    [InlineData(" 1.2.3.4")]
+    [InlineData("1..3.4")]
+    [InlineData("1.-2.3.4")]
+    [InlineData("1.2.3")]
+    [InlineData(".2.3.4")]
+    [InlineData("1.2.3.")]
+    [InlineData("1.2.3.4.")]
+    [InlineData("256.255.255.255")]
+    [InlineData("A.2.3.4")]
+    [InlineData("localhost")]
+    public void IsValidIp_ShouldReturn_False(string sourceString)
+    {
+        var isValidIp = sourceString.IsValidIp();
+
+        isValidIp.Should().BeFalse();
+    }
 }
