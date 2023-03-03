@@ -1,6 +1,6 @@
 ﻿using System;
 using Zs.Common.Exceptions;
-
+#nullable enable
 namespace Zs.Common.Models;
 
 public class Result
@@ -17,6 +17,8 @@ public class Result
 
     public static Result<TValue> Success<TValue>(TValue value) => new(value);
 
+    public static implicit operator Result(Fault fault) => Fail(fault);
+
     public static Result Fail(Fault fault)
     {
         ArgumentNullException.ThrowIfNull(fault);
@@ -26,7 +28,7 @@ public class Result
     public static Result<TValue> Fail<TValue>(Fault fault)
     {
         ArgumentNullException.ThrowIfNull(fault);
-        return new Result<TValue>(default, fault);
+        return new Result<TValue>(default!, fault);
     }
 
     public virtual void EnsureSuccess()
@@ -35,25 +37,5 @@ public class Result
         {
             throw new FaultException(Fault!);
         }
-    }
-}
-
-public class Result<TValue> : Result
-{
-    private readonly TValue _value;
-
-    public TValue Value
-    {
-        get
-        {
-            EnsureSuccess();
-            return _value;
-        }
-    }
-
-    public Result(TValue value, Fault? fault = null)
-        : base(fault)
-    {
-        _value = value;
     }
 }
