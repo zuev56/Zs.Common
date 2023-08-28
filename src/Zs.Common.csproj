@@ -4,8 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <PackageId>Zs.Common</PackageId>
-    <Version>7.0.5</Version>
-    <PublishTrimmed>true</PublishTrimmed>
+    <Version>7.0.6</Version>
     <Authors>zuev56 (Sergei Zuev)</Authors>
     <Company>zuev56 (Sergei Zuev)</Company>
     <RepositoryUrl>https://github.com/zuev56/Zs.Common</RepositoryUrl>
@@ -15,7 +14,7 @@
   
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
   </ItemGroup>
 
 </Project>

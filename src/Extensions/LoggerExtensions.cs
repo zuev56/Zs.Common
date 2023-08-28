@@ -10,11 +10,11 @@ public static class LoggerExtensions
     public static void LogProgramStart(this ILogger logger)
     {
         logger.LogWarning("-! Starting {ProcessName} (MachineName: {MachineName}, OS: {OS}, User: {User}, ProcessId: {ProcessId})",
-            Process.GetCurrentProcess()?.MainModule?.ModuleName,
+            Process.GetCurrentProcess().MainModule?.ModuleName,
             Environment.MachineName,
             Environment.OSVersion,
             Environment.UserName,
-            Process.GetCurrentProcess().Id);
+            Environment.ProcessId);
     }
 
     public static void LogProcessState(this ILogger logger, Process process)

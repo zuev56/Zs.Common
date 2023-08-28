@@ -17,7 +17,6 @@ public static class DbDataReaderExtensions
     public static async Task<string> ReadToJsonAsync(this DbDataReader reader)
     {
         var rows = new List<Dictionary<string, string?>>();
-
         while (await reader.ReadAsync().ConfigureAwait(false))
         {
             var row = new Dictionary<string, string?>();

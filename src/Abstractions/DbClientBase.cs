@@ -2,6 +2,7 @@
 using System.Data.Common;
 using System.Diagnostics;
 using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Zs.Common.Enums;
@@ -18,69 +19,63 @@ public abstract class DbClientBase<TConnection, TCommand> : IDbClient
 
     protected DbClientBase(string connectionString, ILogger<DbClientBase<TConnection, TCommand>>? logger = null)
     {
-        if (string.IsNullOrWhiteSpace(connectionString))
-        {
-            throw new ArgumentException($"'{nameof(_connectionString)}' cannot be null or empty", nameof(_connectionString));
-        }
+        ArgumentException.ThrowIfNullOrEmpty(connectionString);
 
         _connectionString = connectionString;
         _logger = logger;
     }
 
-    public async Task<string?> GetQueryResultAsync(string sqlQuery)
+    public async Task<string?> GetQueryResultAsync(string sqlQuery, CancellationToken cancellationToken = default)
     {
-        var result = await MakeQueryAndHandleResult(sqlQuery,
-            handleResult: static async (reader) =>
-            {
-                await reader.ReadAsync().ConfigureAwait(false);;
+        return await MakeQueryAndHandleResult(sqlQuery, HandleResult, cancellationToken).ConfigureAwait(false);
 
-                var isDbNull = await reader.IsDBNullAsync(0).ConfigureAwait(false);;
-                var result = !isDbNull ? reader.GetString(0) : null;
+        async Task<string?> HandleResult(DbDataReader reader)
+        {
+            await reader.ReadAsync(cancellationToken).ConfigureAwait(false);
+            var isDbNull = await reader.IsDBNullAsync(0, cancellationToken).ConfigureAwait(false);
+            var result = isDbNull ? null : reader.GetString(0);
 
-                return result;
-            }).ConfigureAwait(false);;
-
-        return result;
+            return result;
+        }
     }
 
-    public async Task<string?> GetQueryResultAsync(string sqlQuery, QueryResultType resultType)
+    public async Task<string?> GetQueryResultAsync(string sqlQuery, QueryResultType resultType, CancellationToken cancellationToken = default)
     {
-        return await MakeQueryAndHandleResult(sqlQuery,
-            handleResult: async reader =>
+        return await MakeQueryAndHandleResult(sqlQuery, HandleResult, cancellationToken).ConfigureAwait(false);
+
+        async Task<string?> HandleResult(DbDataReader reader)
+        {
+            bool isDbNull;
+            switch (resultType)
             {
-                bool isDbNull;
-                switch (resultType)
-                {
-                    case QueryResultType.Double:
-                        await reader.ReadAsync().ConfigureAwait(false);;
-                        isDbNull = await reader.IsDBNullAsync(0).ConfigureAwait(false);;
-                        return isDbNull ? null : reader.GetDouble(0).ToString(CultureInfo.InvariantCulture);
-                    case QueryResultType.Json:
-                        return await reader.ReadToJsonAsync().ConfigureAwait(false);;
-                    case QueryResultType.String:
-                        await reader.ReadAsync().ConfigureAwait(false);;
-                        isDbNull = await reader.IsDBNullAsync(0).ConfigureAwait(false);;
-                        return isDbNull ? null : reader.GetString(0);
-                    default:
-                        return null;
-                }
-            }).ConfigureAwait(false);;
+                case QueryResultType.Double:
+                    await reader.ReadAsync(cancellationToken).ConfigureAwait(false);
+                    isDbNull = await reader.IsDBNullAsync(0, cancellationToken).ConfigureAwait(false);
+                    return isDbNull ? null : reader.GetDouble(0).ToString(CultureInfo.CurrentCulture);
+                case QueryResultType.Json:
+                    return await reader.ReadToJsonAsync().ConfigureAwait(false);
+                case QueryResultType.String:
+                    await reader.ReadAsync(cancellationToken).ConfigureAwait(false);
+                    isDbNull = await reader.IsDBNullAsync(0, cancellationToken).ConfigureAwait(false);
+                    return isDbNull ? null : reader.GetString(0);
+                default:
+                    return null;
+            }
+        }
     }
 
-    private async Task<TResult> MakeQueryAndHandleResult<TResult>(string sqlQuery, Func<DbDataReader, Task<TResult>> handleResult)
+    private async Task<TResult> MakeQueryAndHandleResult<TResult>(
+        string sqlQuery, Func<DbDataReader, Task<TResult>> handleResult, CancellationToken cancellationToken)
     {
         try
         {
-            if (string.IsNullOrEmpty(sqlQuery))
-                throw new ArgumentException($"'{nameof(sqlQuery)}' cannot be null or empty", nameof(sqlQuery));
+            ArgumentException.ThrowIfNullOrEmpty(sqlQuery);
 
-            var sw = new Stopwatch();
-            sw.Start();
-
+            var sw = Stopwatch.StartNew();
             await using var connection = new TConnection();
             {
                 connection.ConnectionString = _connectionString;
-                await connection.OpenAsync().ConfigureAwait(false);;
+                await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
                 TResult result;
 
                 await using var command = new TCommand();
@@ -88,22 +83,20 @@ public abstract class DbClientBase<TConnection, TCommand> : IDbClient
                     command.CommandText = sqlQuery;
                     command.Connection = connection;
 
-                    await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);;
-                    {
-                        result = await handleResult(reader);
-                    }
+                    await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+                    result = await handleResult.Invoke(reader);
                 }
 
                 sw.Stop();
                 _logger?.LogDebug("{MethodName} [Elapsed: {Elapsed}].\n\tSQL: {SQL}", nameof(GetQueryResultAsync), sw.Elapsed, sqlQuery);
 
-                await connection.CloseAsync().ConfigureAwait(false);;
+                await connection.CloseAsync().ConfigureAwait(false);
                 return result;
             }
         }
-        catch (InvalidCastException icex)
+        catch (InvalidCastException ex)
         {
-            _logger?.LogError(icex, "Error getting query result");
+            _logger?.LogError(ex, "Error getting query result");
             throw;
         }
     }

@@ -20,7 +20,7 @@ public class FaultException : Exception
     }
 
     public FaultException(string message, Exception? innerException = null)
-        : this(Fault.Unknown.SetMessage(message), innerException)
+        : this(Fault.Unknown.WithMessage(message), innerException)
     {
     }
 }
