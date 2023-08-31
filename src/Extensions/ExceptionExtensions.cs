@@ -8,7 +8,7 @@ public static class ExceptionExtensions
     public static string ToText(this Exception ex)
         => $"\n\n{ex.GetType()}\nMessage:\n{ex.Message}\n\nStackTrace:\n{ex.StackTrace}";
 
-    public static void TrySaveToFile(this Exception exception)
+    public static bool TrySaveToFile(this Exception exception)
     {
         try
         {
@@ -17,10 +17,12 @@ public static class ExceptionExtensions
                        + $"Message: {exception.Message}{Environment.NewLine}"
                        + $"StackTrace: {exception.StackTrace}";
             File.AppendAllText(path, text);
+            return true;
         }
         catch (Exception ex)
         {
             Console.WriteLine($"\n\n{ex}\nMessage:\n{ex.Message}\n\nStackTrace:\n{ex.StackTrace}");
+            return false;
         }
     }
 }

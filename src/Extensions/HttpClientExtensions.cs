@@ -17,7 +17,7 @@ public static class HttpClientExtensions
     /// <param name="url">Address without parameters</param>
     /// <param name="queryParams">Query parameters</param>
     /// <param name="cancellationToken">A token that may be used to cancel the read operation</param>
-    public static async Task<TResult> GetAsync<TResult>(
+    public static async Task<TResult?> GetAsync<TResult>(
         this HttpClient httpClient,
         string url,
         IDictionary<string, string>? queryParams = null,
@@ -36,11 +36,11 @@ public static class HttpClientExtensions
     /// <param name="postingObject">An object to post</param>
     /// <param name="queryParams">Query parameters</param>
     /// <param name="cancellationToken">A token that may be used to cancel the read operation</param>
-    public static async Task<TResult> PostAsync<TResult>(
+    public static async Task<TResult?> PostAsync<TResult>(
         this HttpClient httpClient,
         string url,
         object postingObject,
-        IDictionary<string, string> queryParams = null,
+        IDictionary<string, string>? queryParams = null,
         CancellationToken cancellationToken = default)
     {
         var serializedObject = JsonSerializer.Serialize(postingObject);
@@ -53,7 +53,7 @@ public static class HttpClientExtensions
         var streamTask = httpResponse.Content.ReadAsStreamAsync(cancellationToken);
         var result = await streamTask.ConfigureAwait(false);
 
-        return await JsonSerializer.DeserializeAsync<TResult>(result);
+        return await JsonSerializer.DeserializeAsync<TResult>(result, cancellationToken: cancellationToken);
     }
 
     /// <summary>Send post request</summary>
@@ -65,7 +65,7 @@ public static class HttpClientExtensions
         this HttpClient httpClient,
         string url,
         object postingObject,
-        IDictionary<string, string> queryParams = null)
+        IDictionary<string, string>? queryParams = null)
     {
         var serializedObject = JsonSerializer.Serialize(postingObject);
         var stringContent = new StringContent(serializedObject, Encoding.UTF8, ContentType);
@@ -82,17 +82,13 @@ public static class HttpClientExtensions
     private static string GetFullUrl(string url, IDictionary<string, string>? queryParams)
     {
         if (queryParams == null || !queryParams.Any())
-        {
             return url;
-        }
 
         var fullUrlBuilder = new StringBuilder();
         fullUrlBuilder.AppendFormat(!url.Contains('?') ? "{0}?" : "{0}&", url);
 
         foreach (var p in queryParams)
-        {
             fullUrlBuilder.Append($"{p.Key}={p.Value}&");
-        }
 
         return fullUrlBuilder.ToString().TrimEnd('&');
     }

@@ -36,54 +36,40 @@ public static class LoggerExtensions
     public static void LogTraceIfNeed(this ILogger logger, string? message, params object?[] args)
     {
         if (logger.IsEnabled(LogLevel.Trace))
-        {
             logger.LogTrace(message, args);
-        }
     }
 
     public static void LogDebugIfNeed(this ILogger logger, string? message, params object?[] args)
     {
         if (logger.IsEnabled(LogLevel.Debug))
-        {
             logger.LogDebug(message, args);
-        }
     }
 
     public static void LogInformationIfNeed(this ILogger logger, string? message, params object?[] args)
     {
         if (logger.IsEnabled(LogLevel.Information))
-        {
             logger.LogInformation(message, args);
-        }
     }
 
     public static void LogWarningIfNeed(this ILogger logger, string? message, params object?[] args)
     {
         if (logger.IsEnabled(LogLevel.Warning))
-        {
             logger.LogWarning(message, args);
-        }
     }
 
     public static void LogErrorIfNeed(this ILogger logger, string? message, params object?[] args)
     {
         if (logger.IsEnabled(LogLevel.Error))
-        {
             logger.LogError(message, args);
-        }
     }
 
     public static void LogErrorIfNeed(this ILogger logger, Exception? exception, string? message, params object?[] args)
     {
         if (!logger.IsEnabled(LogLevel.Error))
-        {
             return;
-        }
 
         if (exception?.Data.Count > 0)
-        {
             args = args.Append(exception.Data).ToArray();
-        }
 
         logger.LogError(exception, message, args);
     }
@@ -91,9 +77,7 @@ public static class LoggerExtensions
     public static void LogCriticalIfNeed(this ILogger logger, string? message, params object?[] args)
     {
         if (logger.IsEnabled(LogLevel.Critical))
-        {
             logger.LogCritical(message, args);
-        }
     }
     #endregion
 }

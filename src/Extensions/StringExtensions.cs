@@ -11,7 +11,7 @@ namespace Zs.Common.Extensions;
 
 public static class StringExtensions
 {
-    private static readonly JsonSerializerOptions prettyJsonSerializerOptions = new ()
+    private static readonly JsonSerializerOptions PrettyJsonSerializerOptions = new ()
     {
         WriteIndented = true,
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
@@ -20,14 +20,10 @@ public static class StringExtensions
     public static string ReplaceEndingWithThreeDots(this string value, int maxStringLength)
     {
         if (string.IsNullOrWhiteSpace(value))
-        {
-            return "";
-        }
+            return string.Empty;
 
         if (maxStringLength < 4)
-        {
             maxStringLength = 4;
-        }
 
         return value.Length < maxStringLength
             ? value
@@ -51,27 +47,21 @@ public static class StringExtensions
         var sb = new StringBuilder();
 
         foreach (var @byte in bytes)
-        {
             sb.Append(@byte.ToString("x2"));
-        }
 
         return sb.ToString();
     }
 
     /// <summary>Split a string into parts of specific length</summary>
     /// <param name="partLength">Length of one part</param>
-    /// <returns><see cref="IEnumerable<string>"/></returns>
+    /// <returns><see cref="IEnumerable&lt;string&gt;"/></returns>
     public static IEnumerable<string> SplitIntoParts(this string value, int partLength)
     {
         if (partLength <= 0)
-        {
             throw new ArgumentException($"{nameof(partLength)} has to be positive.", nameof(partLength));
-        }
 
         if (value == string.Empty)
-        {
             yield return string.Empty;
-        }
 
         for (var i = 0; i < value.Length; i += partLength)
         {
@@ -86,7 +76,7 @@ public static class StringExtensions
     public static string? ReplaceEmojiWithX(this string? value)
         => value == null ? null : Regex.Replace(value, @"\p{Cs}", "[x]");
 
-    /// <summary> Sort parametres and make pretty JSON string </summary>        
+    /// <summary> Sort parameters and make pretty JSON string </summary>
     public static string NormalizeJsonString(this string json)
     {
         var jsonElement = JsonSerializer.Deserialize<JsonElement>(json);
@@ -96,7 +86,7 @@ public static class StringExtensions
             case JsonValueKind.Object:
             {
                 var normalizedJsonElement = SortPropertiesAlphabetically(jsonElement);
-                return JsonSerializer.Serialize(normalizedJsonElement, prettyJsonSerializerOptions);
+                return JsonSerializer.Serialize(normalizedJsonElement, PrettyJsonSerializerOptions);
             }
             case JsonValueKind.Array:
             {
@@ -107,7 +97,7 @@ public static class StringExtensions
                     var normalizedItem = jsonArray[i].ToString().NormalizeJsonString();
                     jsonArray[i] = JsonSerializer.Deserialize<JsonElement>(normalizedItem);
                 }
-                return JsonSerializer.Serialize(jsonArray, prettyJsonSerializerOptions);
+                return JsonSerializer.Serialize(jsonArray, PrettyJsonSerializerOptions);
             }
             default:
                 return json;

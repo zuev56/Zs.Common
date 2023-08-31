@@ -8,7 +8,7 @@ public static class ConfigurationExtensions
 {
     public static bool ContainsKey(this IConfiguration configuration, string key)
     {
-        ArgumentNullException.ThrowIfNull(key);
+        ArgumentException.ThrowIfNullOrEmpty(key);
 
         return configuration.GetChildren().Any(item => item.Key == key);
     }

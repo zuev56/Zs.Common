@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Data.Common;
 using System.Diagnostics;
-using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Zs.Common.Enums;
 using Zs.Common.Extensions;
 
 namespace Zs.Common.Abstractions;
@@ -30,38 +28,7 @@ public abstract class DbClientBase<TConnection, TCommand> : IDbClient
         return await MakeQueryAndHandleResult(sqlQuery, HandleResult, cancellationToken).ConfigureAwait(false);
 
         async Task<string?> HandleResult(DbDataReader reader)
-        {
-            await reader.ReadAsync(cancellationToken).ConfigureAwait(false);
-            var isDbNull = await reader.IsDBNullAsync(0, cancellationToken).ConfigureAwait(false);
-            var result = isDbNull ? null : reader.GetString(0);
-
-            return result;
-        }
-    }
-
-    public async Task<string?> GetQueryResultAsync(string sqlQuery, QueryResultType resultType, CancellationToken cancellationToken = default)
-    {
-        return await MakeQueryAndHandleResult(sqlQuery, HandleResult, cancellationToken).ConfigureAwait(false);
-
-        async Task<string?> HandleResult(DbDataReader reader)
-        {
-            bool isDbNull;
-            switch (resultType)
-            {
-                case QueryResultType.Double:
-                    await reader.ReadAsync(cancellationToken).ConfigureAwait(false);
-                    isDbNull = await reader.IsDBNullAsync(0, cancellationToken).ConfigureAwait(false);
-                    return isDbNull ? null : reader.GetDouble(0).ToString(CultureInfo.CurrentCulture);
-                case QueryResultType.Json:
-                    return await reader.ReadToJsonAsync().ConfigureAwait(false);
-                case QueryResultType.String:
-                    await reader.ReadAsync(cancellationToken).ConfigureAwait(false);
-                    isDbNull = await reader.IsDBNullAsync(0, cancellationToken).ConfigureAwait(false);
-                    return isDbNull ? null : reader.GetString(0);
-                default:
-                    return null;
-            }
-        }
+            => await reader.ReadToJsonAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<TResult> MakeQueryAndHandleResult<TResult>(
