@@ -3,12 +3,11 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <PackageId>Zs.Common</PackageId>
     <Version>7.1.0</Version>
+    <PackageId>Zs.Common</PackageId>
     <Authors>zuev56 (Sergei Zuev)</Authors>
     <Company>zuev56 (Sergei Zuev)</Company>
     <RepositoryUrl>https://github.com/zuev56/Zs.Common</RepositoryUrl>
-    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <PackageProjectUrl>https://www.nuget.org/packages/Zs.Common/</PackageProjectUrl>
   </PropertyGroup>
   
